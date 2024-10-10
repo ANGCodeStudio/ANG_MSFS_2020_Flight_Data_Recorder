@@ -29,8 +29,8 @@ To set up the environment and install dependencies:
 
 1. Clone the repository:
    ```
-   git clone https://github.com/your-repo-name.git
-   cd your-repo-name
+   git clone https://github.com/ANG_MSFS_2020_Flight_Data_Recorder.git
+   cd ANG_MSFS_2020_Flight_Data_Recorder
    ```
 
 2. Dependencies:
