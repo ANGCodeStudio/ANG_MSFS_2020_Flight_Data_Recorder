@@ -446,10 +446,10 @@ def make_flight_header(_AQ, _TF):
 
     '''
     # Set the flight num and make dir 
-    print("Making flight data directory...")
-    make_flight_data_dir(_AQ)
     print("Setting flight number...")
     set_flight_num(_AQ)
+    print("Making flight data directory...")
+    make_flight_data_dir(_AQ)
     flight_num = get_last_flight_num() # GETS LAST FLIGHT NUMBER IN DATA DIRECTORY
     start_flight_data = get_start_flight_data(_AQ, _TF)
     save_data(start_flight_data, flight_num, f'{flight_num}_Flight_Header') # SAVES THE HEADER .pkl
