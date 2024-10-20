@@ -45,7 +45,7 @@ class WorkerThread(QRunnable):
         self.kwargs = kwargs
         self.signals = WorkerSignals()
         self.is_paused = False
-        self.flight_dictionary = False
+        self.flight_dictionary = None
         
     @pyqtSlot()
     def run(self):
@@ -53,40 +53,43 @@ class WorkerThread(QRunnable):
         Initialise the run function with passed args, kwargs. Iterates about 
         every 1 seconds. 
         ''' 
-        # DO HEAVY LIFTING HERE
+        # DO HEAVY LIFTING HERE 
         while self.running:
-            time.sleep(1.0)
+            time.sleep(1.0) 
+            # Check if we are in a flight
+            self.in_flight = self.in_current_flight()
+            print(f"SELF IN FLIGHT: {self.in_flight}")
+            # Get current flight number 
             self.current_flight_num = angflightrec.get_atc_flight_number(self._AQ)
-            if self.current_flight_num != '' and self.current_flight_num[0] == 'f':
-                self.in_curr_flight = True  
-            else: 
-                self.in_curr_flight = False
-            self.last_flight_num = angflightrec.get_last_flight_num() # LAST FLIGHT NUMBER IN DATA DIRECTORY 
-            self.master_systems_on = self.check_master_systems_on()
-            if self.is_paused: 
+            print(f"SELF CURRENT FLIGHT NUMBER: {self.current_flight_num}")
+            # Get last flight number in data directory 
+            self.last_flight_num = angflightrec.get_last_flight_num()  
+            print(f"LAST FLIGHT NUMBER: {self.last_flight_num}")
+    
+            if self.is_paused:
                 self.message_text = "RECORD PAUSED."
-                self.signals.message_text.emit(self.message_text) 
-            elif not self.check_master_systems_on():
-                self.message_text = "Master Avionics Switch off... Waiting for flight...\n"\
-                                    "Master Electronics Switch off... Waiting for flight..."
-                self.signals.message_text.emit(self.message_text) 
-            elif (self.master_systems_on and   
-                  not self.in_curr_flight):
+                self.signals.message_text.emit(self.message_text)
+                continue  # Skip to the next iteration
+    
+            if not self.in_flight:
+                self.message_text = "WAITING FOR FLIGHT..."
+                self.signals.message_text.emit(self.message_text)
+                # Reset flight dictionary since flight has ended
+                self.flight_dictionary = None
+                continue  # Skip to the next iteration
+    
+            # At this point, we are in flight
+            if self.flight_dictionary is None:
+                # Start a new flight
                 self.start_new_flight()
-                self.in_curr_flight = True
-                self.wait_loading()
+                self.wait_loading(30)
                 self.emmit_header()
-            else: 
-                if (not self.flight_dictionary and 
-                    self.in_curr_flight): # If in current flight flight number will not be '' 
-                    self.flight_dictionary = angflightrec.load_data(f'./data/{self.last_flight_num}/{self.last_flight_num}.pkl')
-                    self.emmit_header()
-                elif (self.in_curr_flight):
-                    # If the flight has started and has a flight number.  
-                    updated_dict = angflightrec.active_record(self.flight_dictionary, self._AQ, self._TF, self.current_flight_num)
-                    self.emmit_header()
-                else: 
-                    continue
+            else:
+                # Continue recording flight data
+                updated_dict = angflightrec.active_record(
+                    self.flight_dictionary, self._AQ, self._TF, self.current_flight_num
+                )
+                self.emmit_header()
 
     def stop(self):
         '''
@@ -100,7 +103,7 @@ class WorkerThread(QRunnable):
         self.running = False
         return 
     
-    def wait_loading(self): 
+    def wait_loading(self, int_load_time): 
         '''
         Function used to allow time to load. 
 
@@ -109,10 +112,10 @@ class WorkerThread(QRunnable):
         None.
 
         '''
-        for i in range(30): 
+        for i in range(int_load_time): 
             time.sleep(.5)
-            t_minus = 30 - i
-            self.message_text = f"Loading flight record: {t_minus}"
+            t_minus = int_load_time - i
+            self.message_text = f"Waiting: {t_minus}"
             self.signals.message_text.emit(self.message_text) 
         return
     
@@ -138,7 +141,8 @@ class WorkerThread(QRunnable):
         except FileNotFoundError: 
             # If the flight directory is absent the flight has not started yet 
             # or ATC assinged a flight number prematurely
-            self.start_new_flight()
+            print('EMMIT HEADER WAITING...')
+            # self.start_new_flight()
         return 
     
     def check_master_systems_on(self): 
@@ -161,6 +165,58 @@ class WorkerThread(QRunnable):
             master_systems_on = False
         return master_systems_on
     
+    def in_current_flight(self): 
+        '''
+        Function checks if currently in flight. The default coordinates signify 
+        that the flight has ended. 
+
+        Returns
+        -------
+        in_current_flight : Bool
+            If in flight True else False.
+
+        '''
+        curr_pos_lat = self._AQ.get("PLANE_LATITUDE")
+        curr_pos_lon = self._AQ.get("PLANE_LONGITUDE")
+        curr_pos_alt = self._AQ.get("PLANE_ALTITUDE")
+        
+        default_end_pos_lat = round(0.000407442168686809,4)
+        default_end_pos_lon = round(0.01397450300629543,4)
+        default_end_pos_alt = round(3.276148519246465,4)
+        
+        print(f"CURRENT POS LAT:{curr_pos_lat}")
+        print(f"CURRENT POS LON:{curr_pos_lon}")
+        print(f"CURRENT POS ALT:{curr_pos_alt}")
+        
+        print(f"DEFAULT POS LAT:{default_end_pos_lat}")
+        print(f"DEFAULT POS LON:{default_end_pos_lon}")
+        print(f"DEFAULT POS ALT:{default_end_pos_alt}")
+        
+        in_current_flight = None 
+        if (curr_pos_lat is not None and 
+            curr_pos_lon is not None and 
+            curr_pos_alt is not None):
+            curr_pos_lat = round(curr_pos_lat,4)
+            curr_pos_lon = round(curr_pos_lon,4)
+            curr_pos_alt = round(curr_pos_alt,4)
+            print(f"CURRENT POS LAT:{curr_pos_lat}")
+            print(f"CURRENT POS LON:{curr_pos_lon}")
+            print(f"CURRENT POS ALT:{curr_pos_alt}")
+        else: 
+            self.in_current_flight()
+            
+        if (curr_pos_lat is not None and 
+            curr_pos_lon is not None and 
+            curr_pos_alt is not None and 
+            curr_pos_lat == default_end_pos_lat and 
+            curr_pos_lon == default_end_pos_lon and 
+            curr_pos_alt < 10):
+               in_current_flight = False
+               angflightrec.clear_flight_num(self._AQ)
+        else: 
+            in_current_flight = True
+        return in_current_flight
+    
     def start_new_flight(self): 
         '''
         Starts new flight via creating a new flight directory for header 
@@ -171,13 +227,15 @@ class WorkerThread(QRunnable):
         None.
 
         '''
+        angflightrec.check_set_last_dir() 
         self.message_text = "Creating Flight Header..."
         self.signals.message_text.emit(self.message_text) 
         self.header_data = angflightrec.make_flight_header(self._AQ, self._TF)
+        # self.wait_loading(10)
         self.message_text = "Creating Flight Dictionary..."
         self.signals.message_text.emit(self.message_text) 
         self.flight_dictionary = angflightrec.get_flight_dictionary()
-        time.sleep(2)
+        # self.wait_loading(5)
         self.current_flight_num = angflightrec.get_last_flight_num() # CURRENT FLIGHT NUMBER FROM DIR
         return 
 
