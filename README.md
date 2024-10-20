@@ -43,7 +43,21 @@ ANG Sim Dashboard Util:
 Displays, in an easy to read format, the current aircraft latitude, longitude, altitude, GPS distance to waypoint, and SIM RATE.  
 
 - **ANG_Flight_Recorder_v_0_5.py**: Handles flight data collection, including connecting to SimConnect and recording detailed flight metrics.
-- **ANG_flight_data_converter.py**: Converts recorded flight data into CSV format using user-friendly command-line options.
+- **ANG_flight_data_converter.py**: Converts recorded flight data into CSV format using user-friendly command-line options.  
+The recorded flights will exist in ./data. DO NOT TOUCH ANYTHING IN DIRECTORY ./data.
+Run ANG_flight_data_converter.py to convert flights that exist in ./data from .pkl to csv.
+This utility allows the user to batch convert flights in ./data. Using the following options:
+  
+Welcome to ANG Flight Data Converter!
+0. Show all Flights not converted to .csv
+1. Convert flight to .csv
+2. Convert flight header to .csv
+3. Convert all flights to .csv
+4. Convert all headers to .csv
+5. Convert all flights and all headers not converted to .csv
+6. Exit  
+
+
 - **ang_flight_data_reader_utils.py**: Provides utility functions for loading and displaying flight data and converting data to pandas DataFrames.
 
 ## Installation
