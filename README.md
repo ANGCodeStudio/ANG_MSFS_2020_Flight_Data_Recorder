@@ -60,7 +60,7 @@ Welcome to ANG Flight Data Converter!
 Once flights are converted to .csv they are placed in directory ./data_csv.  You can back up the csv files in ./data_csv after conversion. 
 A one hour flight is about 1MB worth of data so you'd have to conduct about 1000 hour long flights to hit a 1GB of data.  
 
-- ** IMPORTANT: THINK OF THE DIRECTORIES ./data AND ./data_csv AS MASTER DIRECTORIES THAT WAREHOUSE RECORDED FLIGHTS DO NOT CHANGE THE DATA IN THESE DIRECTORIES.  
+** IMPORTANT: THINK OF THE DIRECTORIES ./data AND ./data_csv AS MASTER DIRECTORIES THAT WAREHOUSE RECORDED FLIGHTS DO NOT CHANGE THE DATA IN THESE DIRECTORIES.  
 
 - **ang_flight_data_reader_utils.py**: Provides utility functions for loading and displaying flight data and converting data to csv.
 
