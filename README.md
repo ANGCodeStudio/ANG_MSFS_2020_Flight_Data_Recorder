@@ -3,8 +3,23 @@
 
 This repository contains various Python modules designed for interacting with Microsoft Flight Simulator 2020. The utilities include functions for recording flight data, handling aircraft systems, converting flight data to CSV format, and more. These tools are built using PyQt5 for the GUI and leverage SimConnect for communication with the flight simulator.  
 
-# How It Works
-** ANG_MSFS_2020_Flight_Data_Recorder.py  Utilities:  
+## Table of Contents
+
+1. Files Overview
+2. Installation
+3. Usage
+4. Modules Overview
+   - ANG_MSFS_2020_Flight_Data_Recorder.py
+   - ANG_Flight_Recorder_v_0_5.py
+   - ANG_flight_data_converter.py
+   - ang_flight_data_reader_utils.py
+5. Requirements
+6. License
+
+## Files Overview
+
+- **ANG_MSFS_2020_Flight_Data_Recorder.py**: Manages aircraft-related utilities with a PyQt5 GUI for flight recording and aircraft control.
+# How ANG_MSFS_2020_Flight_Data_Recorder Works:  
 Local Flight Record Util:  
 1. Once started. Recorder will standby on main menu screen until a flight is detected to have started.
 2. A new flight is detected. 
@@ -27,24 +42,6 @@ Fully repairs and refuels the aircraft instantly.
 ANG Sim Dashboard Util:  
 Displays, in an easy to read format, the current aircraft latitude, longitude, altitude, GPS distance to waypoint, and SIM RATE.  
 
-
-
-## Table of Contents
-
-1. Files Overview
-2. Installation
-3. Usage
-4. Modules Overview
-   - ANG_MSFS_2020_Flight_Data_Recorder.py
-   - ANG_Flight_Recorder_v_0_5.py
-   - ANG_flight_data_converter.py
-   - ang_flight_data_reader_utils.py
-5. Requirements
-6. License
-
-## Files Overview
-
-- **ANG_MSFS_2020_Flight_Data_Recorder.py**: Manages aircraft-related utilities with a PyQt5 GUI for flight recording and aircraft control.
 - **ANG_Flight_Recorder_v_0_5.py**: Handles flight data collection, including connecting to SimConnect and recording detailed flight metrics.
 - **ANG_flight_data_converter.py**: Converts recorded flight data into CSV format using user-friendly command-line options.
 - **ang_flight_data_reader_utils.py**: Provides utility functions for loading and displaying flight data and converting data to pandas DataFrames.
