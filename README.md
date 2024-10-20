@@ -33,13 +33,13 @@ To set up the environment and install dependencies:
    cd ANG_MSFS_2020_Flight_Data_Recorder
    ```
 
-2. Dependencies:
-   Python 3.7 or higher
-   PyQt5
-   pandas
-   SimConnect
-   timezonefinder
-   pytz
+2. Dependencies:  
+   Python 3.7 or higher  
+   PyQt5  
+   pandas  
+   SimConnect  
+   timezonefinder  
+   pytz  
 
 3. Ensure you have Microsoft Flight Simulator and SimConnect properly set up on your machine.
 
