@@ -1,7 +1,33 @@
 
 # ANG Flight Data Utilities
 
-This repository contains various Python modules designed for interacting with Microsoft Flight Simulator 2020 data. The utilities include functions for recording flight data, handling aircraft systems, converting flight data to CSV format, and more. These tools are built using PyQt5 for the GUI and leverage SimConnect for communication with the flight simulator.
+This repository contains various Python modules designed for interacting with Microsoft Flight Simulator 2020. The utilities include functions for recording flight data, handling aircraft systems, converting flight data to CSV format, and more. These tools are built using PyQt5 for the GUI and leverage SimConnect for communication with the flight simulator.  
+
+# How It Works
+** ANG_MSFS_2020_Flight_Data_Recorder.py  Utilities:
+Local Flight Record Steps:  
+1. Once started. Recorder will standby on main menu screen until a flight is detected to have started.
+2. A new flight is detected. 
+3. A new flight number directory is created sequentially in the ./data directory using the f number i.e. f1, f2, f3.  
+4. A new ATC flight number is assigned corrosponding with the flight number directory in ./data.
+5. A flight header .pkl file is created in ./data/f#/f#_Flight_Header.pkl
+6. A flight data .pkl file is created in ./data/f#/f#.pkl (This file activily records the current flight data every few seconds)
+9. Once flight is detected to have concluded recorder goes on standby in step 1.  
+
+Aircraft Shutdown Util:  
+Start All Aircraft Systems: Starts all Engines, Electronics, and Avionics.  
+Stop All Aircraft Systems: Stops all engines, Electronics and Avionics.  
+
+Aircraft Fast Travel Util:  
+Given a destination Latitude, longitude, and Altitude will teleport the aircraft instantly.  
+
+Repair and Refuel Util:  
+Fully repairs and refuels the aircraft instantly.  
+
+ANG Sim Dashboard Util:  
+Displays, in an easy to read format, the current aircraft latitude, longitude, altitude, GPS distance to waypoint, and SIM RATE.  
+
+
 
 ## Table of Contents
 
