@@ -49,7 +49,7 @@ Run ANG_flight_data_converter.py to convert flights that exist in ./data from .p
 This utility allows the user to batch convert flights in ./data. Using the following options:
   
 Welcome to ANG Flight Data Converter!  
-0. Show all Flights not converted to .csv
+ 0. Show all Flights not converted to .csv  
 1. Convert flight to .csv
 2. Convert flight header to .csv
 3. Convert all flights to .csv
