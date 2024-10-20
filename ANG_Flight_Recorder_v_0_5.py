@@ -11,6 +11,7 @@ import glob
 import pickle 
 import pytz
 import timezonefinder 
+import shutil 
 from datetime import datetime
 from SimConnect import SimConnect, AircraftEvents, AircraftRequests
 
@@ -81,16 +82,29 @@ def get_last_flight_num():
         latest_file = max(list_of_files, key=os.path.getctime).split('\\')[-1]
     return latest_file
 
-def check_flight_number(int_flight_num_to_check):
+def check_flight_number(str_flight_num):
     list_of_files = glob.glob('./data/*') # * means all if need specific format then *.csv
     curr_flight_nums_in_dir = []
     for i in list_of_files: 
-        curr_flight_nums_in_dir.append(int(i.split('\\')[-1]))
-    if int_flight_num_to_check in curr_flight_nums_in_dir: 
+        curr_flight_nums_in_dir.append(i.split('\\')[-1])
+    if str_flight_num in curr_flight_nums_in_dir: 
         is_in_dir = True
     else: 
         is_in_dir = False 
     return is_in_dir
+
+def check_flight_in_dir():
+    '''
+    Function checks that the last flight dir created has actual flight data. 
+    If not, use that flight number as flight. 
+
+    Returns
+    -------
+    None.
+
+    '''
+    
+    return 
 
 def get_local_time_stamp(_AQ, _TF): 
     '''
@@ -119,7 +133,7 @@ def get_local_time_stamp(_AQ, _TF):
         timestamp = dt + timezone.utcoffset(dt)
     except:
         print("Retry time stamp time stamp.")
-        timestamp = 'Nan'
+        get_local_time_stamp(_AQ,_TF)
         
     return timestamp
 
@@ -413,6 +427,18 @@ def set_flight_num(_AQ):
     _AQ.set("ATC_FLIGHT_NUMBER", str.encode(flight_num))
     return 
 
+def clear_flight_num(_AQ):
+    '''
+    Function sets next flight number. 
+
+    Returns
+    -------
+    None.
+
+    ''' 
+    _AQ.set("ATC_FLIGHT_NUMBER", str.encode('STANDBY_FOR_FLIGHT_NUMBER'))
+    return 
+
 def make_flight_data_dir(_AQ):
     '''
     Makes a new directory to record flight data with a custom flight num. 
@@ -446,14 +472,26 @@ def make_flight_header(_AQ, _TF):
 
     '''
     # Set the flight num and make dir 
-    print("Setting flight number...")
-    set_flight_num(_AQ)
     print("Making flight data directory...")
     make_flight_data_dir(_AQ)
+    print("Setting flight number...")
+    set_flight_num(_AQ)
     flight_num = get_last_flight_num() # GETS LAST FLIGHT NUMBER IN DATA DIRECTORY
     start_flight_data = get_start_flight_data(_AQ, _TF)
     save_data(start_flight_data, flight_num, f'{flight_num}_Flight_Header') # SAVES THE HEADER .pkl
     return  start_flight_data
+
+def check_set_last_dir(): 
+    last_flight_dir = get_last_flight_num()
+    file_path = f"./data/{last_flight_dir}/{last_flight_dir}.pkl"
+
+    if os.path.exists(file_path):
+        print("File exists")
+    else:
+        print(f'Flight data {file_path}.pkl does not exist. Removing...')
+        shutil.rmtree(f"./data/{last_flight_dir}", ignore_errors=True)
+
+    return 
 
 def active_record(flight_dictionary, _AQ, _TF, flight_num): 
     '''
