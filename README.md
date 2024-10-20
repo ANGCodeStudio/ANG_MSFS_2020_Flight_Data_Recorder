@@ -46,8 +46,7 @@ Displays, in an easy to read format, the current aircraft latitude, longitude, a
 - **ANG_flight_data_converter.py**: Converts recorded flight data into CSV format using user-friendly command-line options.  
 The recorded flights will exist in ./data. DO NOT TOUCH ANYTHING IN DIRECTORY ./data.
 Run ANG_flight_data_converter.py to convert flights that exist in ./data from .pkl to csv.
-This utility allows the user to batch convert flights in ./data. Using the following options:
-  
+This utility allows the user to batch convert flights in ./data. Using the following options:  
 ```
 Welcome to ANG Flight Data Converter!
 0. Show all Flights not converted to .csv
@@ -57,10 +56,11 @@ Welcome to ANG Flight Data Converter!
 4. Convert all headers to .csv
 5. Convert all flights and all headers not converted to .csv
 6. Exit
-```
+```  
+Once flights are converted to .csv they are placed in directory ./data_csv.  
+A one hour flight is about 1MB worth of data so you'd have to conduct about 1000 flights to hit a 1GB of data.  
 
-
-- **ang_flight_data_reader_utils.py**: Provides utility functions for loading and displaying flight data and converting data to pandas DataFrames.
+- **ang_flight_data_reader_utils.py**: Provides utility functions for loading and displaying flight data and converting data to csv.
 
 ## Installation
 
