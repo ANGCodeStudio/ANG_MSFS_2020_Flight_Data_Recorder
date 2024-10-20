@@ -5,6 +5,7 @@ Created on Thu Oct 10 16:59:50 2024
 @author: ANG
 """
 import ang_data_reader_utils as angdru
+import time 
 
 def main():
     help_str = "\nWelcome to ANG Flight Data Converter!\n"\
@@ -56,6 +57,7 @@ def main():
                 continue
         elif user_input == "6":
             print("Exiting the application. Goodbye!")
+            time.sleep(4)
             break
         else:
             # Handle invalid input
