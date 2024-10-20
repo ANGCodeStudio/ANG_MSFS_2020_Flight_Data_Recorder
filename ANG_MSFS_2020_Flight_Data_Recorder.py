@@ -58,19 +58,16 @@ class WorkerThread(QRunnable):
             time.sleep(1.0) 
             # Check if we are in a flight
             self.in_flight = self.in_current_flight()
-            print(f"SELF IN FLIGHT: {self.in_flight}")
             # Get current flight number 
             self.current_flight_num = angflightrec.get_atc_flight_number(self._AQ)
-            print(f"SELF CURRENT FLIGHT NUMBER: {self.current_flight_num}")
             # Get last flight number in data directory 
-            self.last_flight_num = angflightrec.get_last_flight_num()  
-            print(f"LAST FLIGHT NUMBER: {self.last_flight_num}")
-    
+            self.last_flight_num = angflightrec.get_last_flight_num()
+            
             if self.is_paused:
                 self.message_text = "RECORD PAUSED."
                 self.signals.message_text.emit(self.message_text)
                 continue  # Skip to the next iteration
-    
+                
             if not self.in_flight:
                 self.message_text = "WAITING FOR FLIGHT..."
                 self.signals.message_text.emit(self.message_text)
@@ -184,14 +181,6 @@ class WorkerThread(QRunnable):
         default_end_pos_lon = round(0.01397450300629543,4)
         default_end_pos_alt = round(3.276148519246465,4)
         
-        print(f"CURRENT POS LAT:{curr_pos_lat}")
-        print(f"CURRENT POS LON:{curr_pos_lon}")
-        print(f"CURRENT POS ALT:{curr_pos_alt}")
-        
-        print(f"DEFAULT POS LAT:{default_end_pos_lat}")
-        print(f"DEFAULT POS LON:{default_end_pos_lon}")
-        print(f"DEFAULT POS ALT:{default_end_pos_alt}")
-        
         in_current_flight = None 
         if (curr_pos_lat is not None and 
             curr_pos_lon is not None and 
@@ -199,9 +188,6 @@ class WorkerThread(QRunnable):
             curr_pos_lat = round(curr_pos_lat,4)
             curr_pos_lon = round(curr_pos_lon,4)
             curr_pos_alt = round(curr_pos_alt,4)
-            print(f"CURRENT POS LAT:{curr_pos_lat}")
-            print(f"CURRENT POS LON:{curr_pos_lon}")
-            print(f"CURRENT POS ALT:{curr_pos_alt}")
         else: 
             self.in_current_flight()
             
