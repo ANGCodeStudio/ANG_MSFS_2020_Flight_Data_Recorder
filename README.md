@@ -4,8 +4,8 @@
 This repository contains various Python modules designed for interacting with Microsoft Flight Simulator 2020. The utilities include functions for recording flight data, handling aircraft systems, converting flight data to CSV format, and more. These tools are built using PyQt5 for the GUI and leverage SimConnect for communication with the flight simulator.  
 
 # How It Works
-** ANG_MSFS_2020_Flight_Data_Recorder.py  Utilities:
-Local Flight Record Steps:  
+** ANG_MSFS_2020_Flight_Data_Recorder.py  Utilities:  
+Local Flight Record Util:  
 1. Once started. Recorder will standby on main menu screen until a flight is detected to have started.
 2. A new flight is detected. 
 3. A new flight number directory is created sequentially in the ./data directory using the f number i.e. f1, f2, f3.  
