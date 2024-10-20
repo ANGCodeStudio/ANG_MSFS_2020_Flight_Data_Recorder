@@ -101,7 +101,7 @@ def get_all_headers_pkl():
     '''
     headers_lst = []
     for root, dirs, files in os.walk('./data'):  # iterates through all flight directories in ./data
-        if len(files) > 0:
+        if len(files) == 2:
             headers_lst.append(files[1].split('_')[0])
     return headers_lst
 
@@ -116,7 +116,7 @@ def get_all_flight_pkl():
     '''
     flights_lst = []
     for root, dirs, files in os.walk('./data'):  # iterates through all flight directories in ./data
-        if len(files) > 0:  
+        if len(files) == 2:  
             flights_lst.append(files[0].split('.')[0])
     return flights_lst
 
