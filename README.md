@@ -24,7 +24,7 @@ Local Flight Record Util:
 1. Once started. Recorder will standby on main menu screen until a flight is detected to have started.
 2. A new flight is detected. 
 3. A new flight number directory is created sequentially in the ./data directory using the f number i.e. f1, f2, f3.  
-4. A new ATC flight number is assigned corrosponding with the flight number directory in ./data.
+4. A new ANG_FLIGHT_NUMBER is assigned corrosponding with the flight number directory in ./data.
 5. A flight header .pkl file is created in ./data/f#/f#_Flight_Header.pkl
 6. A flight data .pkl file is created in ./data/f#/f#.pkl (This file activily records the current flight data every few seconds)
 9. Once flight is detected to have concluded recorder goes on standby in step 1.  
