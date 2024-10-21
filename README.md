@@ -1,5 +1,5 @@
 
-# ANG Flight Data Utilities
+# ANG Flight Data Recorder and Utilities
 
 This repository contains various Python modules designed for interacting with Microsoft Flight Simulator 2020. The utilities include functions for recording flight data, handling aircraft systems, converting flight data to CSV format, and more. These tools are built using PyQt5 for the GUI and leverage SimConnect for communication with the flight simulator.  
 
