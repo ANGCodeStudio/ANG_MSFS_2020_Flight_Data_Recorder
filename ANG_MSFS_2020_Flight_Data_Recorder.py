@@ -46,6 +46,7 @@ class WorkerThread(QRunnable):
         self.signals = WorkerSignals()
         self.is_paused = False
         self.flight_dictionary = None
+        self.ang_fnum = None
         
     @pyqtSlot()
     def run(self):
@@ -56,10 +57,10 @@ class WorkerThread(QRunnable):
         # DO HEAVY LIFTING HERE 
         while self.running:
             time.sleep(1.0) 
-            # Check if we are in a flight
+            # Check if we are in a flight 
             self.in_flight = self.in_current_flight()
             # Get current flight number 
-            self.current_flight_num = angflightrec.get_atc_flight_number(self._AQ)
+            # self.current_flight_num = angflightrec.get_flight_number(self._AQ)
             # Get last flight number in data directory 
             self.last_flight_num = angflightrec.get_last_flight_num()
             
@@ -73,19 +74,20 @@ class WorkerThread(QRunnable):
                 self.signals.message_text.emit(self.message_text)
                 # Reset flight dictionary since flight has ended
                 self.flight_dictionary = None
+                # Reset flight number since flight has ended
+                self.ang_fnum = None
                 continue  # Skip to the next iteration
     
             # At this point, we are in flight
             if self.flight_dictionary is None:
                 # Start a new flight
-                self.start_new_flight()
                 self.wait_loading(30)
+                self.start_new_flight()
                 self.emmit_header()
             else:
                 # Continue recording flight data
                 updated_dict = angflightrec.active_record(
-                    self.flight_dictionary, self._AQ, self._TF, self.current_flight_num
-                )
+                    self.flight_dictionary, self._AQ, self._TF, self.ang_fnum)
                 self.emmit_header()
 
     def stop(self):
@@ -110,36 +112,37 @@ class WorkerThread(QRunnable):
 
         '''
         for i in range(int_load_time): 
-            time.sleep(.5)
+            time.sleep(1)
             t_minus = int_load_time - i
-            self.message_text = f"Waiting: {t_minus}"
+            self.message_text = f"Loading: {t_minus}"
             self.signals.message_text.emit(self.message_text) 
         return
     
     def emmit_header(self):
         '''
-        Function emits header to app. If flight header is non-existent creates 
-        new flight data directory. 
+        Function emits header to app.
 
         Returns
         -------
         None.
 
         '''
-        try: 
-            self.current_atc_flight_num = angflightrec.get_atc_flight_number(self._AQ) # ATC FLIGHT NUMBER
-            dir_str = f'./data/{self.current_atc_flight_num}/{self.current_atc_flight_num}_Flight_Header.pkl'
-            self.header_data = angflightrec.load_data(dir_str)
-            self.header_str = 'RECORDING:\n--FLIGHT HEADER--\n'
-            for k,v in self.header_data.items(): 
-                self.header_str += str(k) + " : " + str(v) + "\n"
-            self.message_text = self.header_str + f"\nRecording in Directory {dir_str}"
-            self.signals.message_text.emit(self.message_text) 
-        except FileNotFoundError: 
-            # If the flight directory is absent the flight has not started yet 
-            # or ATC assinged a flight number prematurely
-            print('EMMIT HEADER WAITING...')
-            # self.start_new_flight()
+        if self.ang_fnum == None: 
+            print("NO FLIGHT NUMBER")
+        else: 
+            try: 
+                dir_str = f'./data/{self.ang_fnum}/{self.ang_fnum}_Flight_Header.pkl'
+                self.header_data = angflightrec.load_data(dir_str)
+                self.header_str = 'RECORDING:\n--FLIGHT HEADER--\n'
+                for k,v in self.header_data.items(): 
+                    self.header_str += str(k) + " : " + str(v) + "\n"
+                self.message_text = self.header_str + f"\nRecording in Directory {dir_str}"
+                self.signals.message_text.emit(self.message_text) 
+            except FileNotFoundError as e: 
+                # If the flight directory is absent the flight has not started yet 
+                # or ATC assinged a flight number prematurely
+                print('EMMIT HEADER WAITING...')
+                # self.start_new_flight()
         return 
     
     def check_master_systems_on(self): 
@@ -164,8 +167,9 @@ class WorkerThread(QRunnable):
     
     def in_current_flight(self): 
         '''
-        Function checks if currently in flight. The default coordinates signify 
-        that the flight has ended. 
+        Function checks if currently in flight. The main menu default coordinates 
+        signify that the flight has ended. 
+        
 
         Returns
         -------
@@ -179,7 +183,7 @@ class WorkerThread(QRunnable):
         
         default_end_pos_lat = round(0.000407442168686809,4)
         default_end_pos_lon = round(0.01397450300629543,4)
-        default_end_pos_alt = round(3.276148519246465,4)
+        # default_end_pos_alt = round(3.276148519246465,4)
         
         in_current_flight = None 
         if (curr_pos_lat is not None and 
@@ -196,11 +200,11 @@ class WorkerThread(QRunnable):
             curr_pos_alt is not None and 
             curr_pos_lat == default_end_pos_lat and 
             curr_pos_lon == default_end_pos_lon and 
-            curr_pos_alt < 10):
+            curr_pos_alt < 50):
                in_current_flight = False
-               angflightrec.clear_flight_num(self._AQ)
         else: 
             in_current_flight = True
+            self.ang_fnum = angflightrec.get_last_flight_num()
         return in_current_flight
     
     def start_new_flight(self): 
@@ -216,12 +220,11 @@ class WorkerThread(QRunnable):
         angflightrec.check_set_last_dir() 
         self.message_text = "Creating Flight Header..."
         self.signals.message_text.emit(self.message_text) 
+        
         self.header_data = angflightrec.make_flight_header(self._AQ, self._TF)
-        # self.wait_loading(10)
         self.message_text = "Creating Flight Dictionary..."
         self.signals.message_text.emit(self.message_text) 
         self.flight_dictionary = angflightrec.get_flight_dictionary()
-        # self.wait_loading(5)
         self.current_flight_num = angflightrec.get_last_flight_num() # CURRENT FLIGHT NUMBER FROM DIR
         return 
 
@@ -270,7 +273,7 @@ class SimUtilsApp(QWidget):
         self.leftlist.currentRowChanged.connect(self.display)
         self.switch = 0 # On/Off proper connect to SimConnect
         self.switch_rec = 0
-        self.setWindowTitle('ANG Sim Utils v.0.0')
+        self.setWindowTitle('ANG MSFS 2020 Flight Data Recorder')
         self.show()
         # Create Threadpool
         self.threadpool = QThreadPool()
@@ -487,7 +490,6 @@ class SimUtilsApp(QWidget):
         layout.addWidget(start_push_button)
         # INSTANTIATE METHODS OF THE STACK
         def go_fast_travel(self): 
-            print("FAST TRAV GO")
             fast_lat = text_input_lat.text()
             fast_lon = text_input_lon.text()
             fast_alt = text_input_alt.text()
