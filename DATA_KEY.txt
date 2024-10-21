@@ -60,3 +60,5 @@ GENERAL_ENG_RPM:1-4: Integer - Engine RPM for engines 1 through 4.
 FUEL_TANK_RIGHT_MAIN_QUANTITY: Integer - Fuel quantity in the right main tank in gallons.
 FUEL_TANK_LEFT_MAIN_QUANTITY: Integer - Fuel quantity in the left main tank in gallons.
 FUEL_TOTAL_QUANTITY_WEIGHT: Integer - Total weight of fuel onboard in pounds.
+STALL_WARNING: boolean - Is stall warning. 
+OVERSPEED_WARNING: boolean - Is overspeed warning. 
