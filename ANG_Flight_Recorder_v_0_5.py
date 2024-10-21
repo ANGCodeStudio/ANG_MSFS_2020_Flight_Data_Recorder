@@ -100,19 +100,6 @@ def check_flight_number(str_flight_num):
         is_in_dir = False 
     return is_in_dir
 
-def check_flight_in_dir():
-    '''
-    Function checks that the last flight dir created has actual flight data. 
-    If not, use that flight number as flight. 
-
-    Returns
-    -------
-    None.
-
-    '''
-    
-    return 
-
 def get_local_time_stamp(_AQ, _TF): 
     '''
     Function gets local time stamp depending where the current flights lat and 
